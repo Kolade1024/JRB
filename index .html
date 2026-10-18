@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JRB Stakeholder Registration</title>
+<meta name="description" content="Attendee registration desk for the Joint Revenue Board (JRB) Framework stakeholder sensitisation meeting, Haulage sector, Ibadan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#fafaf9; --surface:#ffffff; --ink:#1a1d1b; --muted:#6b716d; --faint:#9aa09c;
+    --line:#e6e7e4; --field:#d4d6d2; --accent:#0f6b3f; --accent-soft:#eaf3ee;
+    --warn:#8a5a00; --warn-soft:#fdf5e4; --danger:#b42318; --danger-soft:#fdeceb;
+    --r:10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#121413; --surface:#181b19; --ink:#e8eae8; --muted:#a0a6a2; --faint:#737a76;
+      --line:#2a2e2b; --field:#3a3f3c; --accent:#5cc28c; --accent-soft:#18301f;
+      --warn:#f0c46a; --warn-soft:#332a14; --danger:#ff8a7a; --danger-soft:#3a1c19;
+    }
+  }
+  * { box-sizing:border-box; }
+  html { background:var(--bg); -webkit-text-size-adjust:100%; }
+  body { margin:0; min-width:320px; background:var(--bg); color:var(--ink); font:400 16px/1.5 "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; }
+  h1,h2,h3,p { margin:0; }
+  button,input,select { font:inherit; color:inherit; }
+  button { cursor:pointer; touch-action:manipulation; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  [hidden] { display:none !important; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 24px; }
+  .narrow { max-width:640px; }
+
+  /* Header */
+  header { background:var(--surface); border-bottom:1px solid var(--line); }
+  .head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:16px; padding-bottom:16px; }
+  .head h1 { font-size:1rem; font-weight:650; }
+  .head p { margin-top:2px; color:var(--muted); font-size:.85rem; }
+  .meta { display:flex; align-items:center; gap:18px; font-size:.85rem; color:var(--muted); white-space:nowrap; }
+  .desk { border:0; padding:4px 0; background:none; color:var(--muted); }
+  .desk b { color:var(--ink); font-weight:600; text-decoration:underline; text-decoration-color:var(--field); text-underline-offset:3px; }
+  .desk:hover b { text-decoration-color:currentColor; }
+  .status { display:inline-flex; align-items:center; gap:7px; }
+  .status i { width:7px; height:7px; border-radius:50%; background:var(--faint); }
+  .status.ok i { background:var(--accent); }
+  .status.wait i { background:#d39b1c; }
+
+  /* Tabs */
+  nav { display:flex; gap:24px; }
+  .tab { position:relative; padding:12px 0; border:0; background:none; color:var(--muted); font-size:.92rem; font-weight:550; }
+  .tab:hover { color:var(--ink); }
+  .tab[aria-selected="true"] { color:var(--ink); }
+  .tab[aria-selected="true"]::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--ink); }
+  .count { margin-left:4px; color:var(--faint); }
+
+  main { padding-top:40px; padding-bottom:64px; }
+  .title { margin-bottom:28px; }
+  .title h2 { font-size:1.5rem; font-weight:650; letter-spacing:-.015em; }
+  .title p { margin-top:6px; color:var(--muted); font-size:.92rem; }
+
+  /* Form */
+  .fields { display:grid; grid-template-columns:1fr 1fr; gap:22px 16px; }
+  .full { grid-column:1/-1; }
+  .f { display:block; min-width:0; }
+  .lab { display:block; margin-bottom:6px; font-size:.88rem; font-weight:550; }
+  .lab small { color:var(--faint); font-weight:400; }
+  input[type=text],input[type=tel],input[type=email],input[type=search],select {
+    width:100%; min-height:48px; padding:11px 13px; border:1px solid var(--field); border-radius:var(--r);
+    background:var(--surface); color:var(--ink); font-size:1rem; -webkit-appearance:none; appearance:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  select { padding-right:40px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239aa09c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 15px center; }
+  input::placeholder { color:var(--faint); opacity:1; }
+  input:focus,select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); outline:0; }
+  .err input,.err select { border-color:var(--danger); }
+  .msg { display:none; margin-top:6px; color:var(--danger); font-size:.82rem; }
+  .err .msg { display:block; }
+
+  .choices { display:grid; gap:8px; }
+  .choice { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 14px; border:1px solid var(--field); border-radius:var(--r); background:var(--surface); cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+  .choice:hover { border-color:var(--faint); }
+  .choice input { width:18px; height:18px; margin:0; accent-color:var(--accent); flex:0 0 auto; }
+  .choice:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); }
+  .err .choice { border-color:var(--danger); }
+
+  .dupe { display:none; margin-top:8px; padding:9px 12px; border-radius:8px; background:var(--warn-soft); color:var(--warn); font-size:.84rem; }
+  .dupe.show { display:block; }
+
+  .actions { display:flex; gap:10px; margin-top:32px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:12px 20px; border:1px solid transparent; border-radius:var(--r); font-size:.95rem; font-weight:600; line-height:1; transition:background .15s ease, border-color .15s ease; }
+  .btn.primary { flex:1; background:var(--ink); color:var(--bg); }
+  .btn.primary:hover { opacity:.88; }
+  .btn.ghost { background:transparent; border-color:var(--field); color:var(--ink); }
+  .btn.ghost:hover { background:var(--surface); border-color:var(--faint); }
+  .btn.danger { background:var(--danger-soft); color:var(--danger); }
+  .btn.sm { min-height:40px; padding:9px 14px; font-size:.88rem; }
+  .linkbtn { border:0; padding:4px 0; background:none; color:var(--muted); font-size:.85rem; text-decoration:underline; text-underline-offset:3px; }
+  .linkbtn:hover { color:var(--danger); }
+
+  /* List */
+  .list-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px; }
+  .list-head .title { margin:0; }
+  .tools { display:flex; flex-wrap:wrap; gap:8px; }
+  .search { margin-bottom:16px; }
+  .tablewrap { overflow:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); }
+  table { width:100%; min-width:960px; border-collapse:collapse; font-size:.86rem; }
+  th,td { padding:12px 14px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-size:.78rem; font-weight:550; white-space:nowrap; }
+  tr:last-child td { border-bottom:0; }
+  td.c-num, td.c-phone, td.c-time { white-space:nowrap; color:var(--muted); }
+  td.c-name { font-weight:600; }
+  .sync { font-size:.8rem; color:var(--muted); white-space:nowrap; }
+  .sync.n { color:var(--warn); }
+  .empty { padding:56px 16px; border:1px dashed var(--field); border-radius:var(--r); color:var(--muted); text-align:center; }
+  .empty .btn { margin-top:16px; }
+
+  /* Toast & dialogs */
+  .toast { position:fixed; z-index:50; left:50%; bottom:calc(24px + env(safe-area-inset-bottom)); max-width:calc(100% - 32px); padding:12px 16px; border-radius:var(--r); background:var(--ink); color:var(--bg); font-size:.9rem; opacity:0; transform:translate(-50%, 8px); pointer-events:none; transition:opacity .2s ease, transform .2s ease; }
+  .toast.show { opacity:1; transform:translate(-50%, 0); }
+  dialog { width:calc(100% - 32px); max-width:440px; padding:0; border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--ink); box-shadow:0 20px 50px rgba(0,0,0,.18); }
+  dialog::backdrop { background:rgba(0,0,0,.35); }
+  .dlg { padding:24px; }
+  .dlg h3 { font-size:1.1rem; font-weight:650; }
+  .dlg p { margin:6px 0 18px; color:var(--muted); font-size:.9rem; }
+  .dlg .actions { margin-top:20px; }
+  .dlg .actions .btn { flex:1; }
+  .dlg .wipe { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); text-align:center; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration:.01ms !important; } }
+
+  /* Mobile */
+  @media (max-width: 700px) {
+    .wrap { padding:0 16px; }
+    .head { flex-direction:column; align-items:flex-start; gap:8px; padding-top:14px; padding-bottom:12px; }
+    .meta { width:100%; justify-content:space-between; gap:12px; font-size:.82rem; }
+    nav { gap:20px; }
+    main { padding-top:24px; padding-bottom:40px; }
+    .title h2 { font-size:1.3rem; }
+    .fields { grid-template-columns:1fr; gap:18px; }
+    .actions.sticky { position:sticky; bottom:0; margin:28px -16px 0; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); background:var(--bg); border-top:1px solid var(--line); }
+    .toast { bottom:calc(84px + env(safe-area-inset-bottom)); }
+    .tools { width:100%; display:grid; grid-template-columns:1fr 1fr; }
+    .tools .btn:first-child { grid-column:1/-1; }
+
+    .tablewrap { overflow:visible; border:0; background:none; }
+    table { min-width:0; }
+    thead { display:none; }
+    table, tbody, tr, td { display:block; }
+    tbody { display:grid; gap:10px; }
+    tr { padding:14px 16px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); }
+    td { display:grid; grid-template-columns:96px minmax(0,1fr); gap:10px; padding:3px 0; border:0; }
+    td::before { content:attr(data-label); color:var(--faint); font-size:.8rem; }
+    td:empty { display:none; }
+    td.c-name { display:block; padding-bottom:6px; font-size:1rem; }
+    td.c-name::before, td.c-act::before { content:none; }
+    td.c-act { display:block; padding-top:6px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head">
+    <div>
+      <h1>JRB Framework · Stakeholder registration</h1>
+      <p>Haulage sector · Tue 20 Oct 2026 · LG Staff Training Hall, Ibadan</p>
+    </div>
+    <div class="meta">
+      <button class="desk" id="changeDesk" type="button">Desk: <b id="deskName">Not set</b></button>
+      <span class="status" id="syncPill" role="status"><i></i><span>Saved on this device</span></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav role="tablist" aria-label="Registration workspace">
+      <button class="tab" role="tab" id="t-register" aria-selected="true" aria-controls="tab-register" data-tab="register">Register</button>
+      <button class="tab" role="tab" id="t-list" aria-selected="false" aria-controls="tab-list" data-tab="list" tabindex="-1">Attendees<span class="count" id="tabCount">0</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- REGISTER -->
+  <section class="wrap narrow" id="tab-register" role="tabpanel" aria-labelledby="t-register">
+    <div class="title">
+      <h2>Register an attendee</h2>
+      <p>Next number <span id="nextNo">—</span></p>
+    </div>
+
+    <form id="regForm" novalidate autocomplete="off">
+      <div class="fields">
+        <label class="f full" data-field="name">
+          <span class="lab">Full name</span>
+          <input type="text" name="name" autocapitalize="words" placeholder="e.g. Alhaji Musa Adebayo">
+          <span class="msg">Enter the attendee's full name</span>
+        </label>
+
+        <div class="f full" data-field="category" role="radiogroup" aria-labelledby="catLabel">
+          <span class="lab" id="catLabel">Attending as</span>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="category" value="Association">Association member</label>
+            <label class="choice"><input type="radio" name="category" value="Government Agency">Government agency / MDA</label>
+            <label class="choice"><input type="radio" name="category" value="Independent / Company">Independent / Company</label>
+          </div>
+          <span class="msg">Choose how this person is attending</span>
+        </div>
+
+        <label class="f full" data-field="affiliation" id="affWrap" hidden>
+          <span class="lab" id="affLabel">Association name</span>
+          <input type="text" name="affiliation" list="affList" autocapitalize="words">
+          <datalist id="affList"></datalist>
+          <span class="msg" id="affMsg">Enter the association name</span>
+        </label>
+
+        <label class="f" data-field="organization">
+          <span class="lab">Organisation <small>(optional)</small></span>
+          <input type="text" name="organization" list="orgList" autocapitalize="words" placeholder="e.g. Adebayo Haulage Ltd">
+          <datalist id="orgList"></datalist>
+        </label>
+
+        <label class="f" data-field="sector">
+          <span class="lab">Sector</span>
+          <select name="sector">
+            <option value="">Select…</option>
+            <option>Haulage / Trucking</option>
+            <option>Transport (Passenger)</option>
+            <option>Logistics &amp; Freight</option>
+            <option>Tanker / Petroleum Haulage</option>
+            <option>Government / Public Service</option>
+            <option>Revenue / Finance</option>
+            <option>Security / Enforcement</option>
+            <option>Media</option>
+            <option>Other</option>
+          </select>
+          <span class="msg">Choose a sector</span>
+        </label>
+
+        <label class="f full" data-field="sectorOther" id="otherWrap" hidden>
+          <span class="lab">Which sector?</span>
+          <input type="text" name="sectorOther">
+          <span class="msg">Describe the sector</span>
+        </label>
+
+        <label class="f" data-field="phone">
+          <span class="lab">Phone number</span>
+          <input type="tel" name="phone" inputmode="numeric" placeholder="0803 123 4567" maxlength="17">
+          <span class="msg">Enter an 11-digit Nigerian number</span>
+          <div class="dupe" id="dupe" role="status"></div>
+        </label>
+
+        <label class="f" data-field="email">
+          <span class="lab">Email <small>(optional)</small></span>
+          <input type="email" name="email" inputmode="email" autocapitalize="off" placeholder="name@example.com">
+          <span class="msg">Check the email format</span>
+        </label>
+      </div>
+
+      <div class="actions sticky">
+        <button class="btn primary" type="submit">Register attendee</button>
+        <button class="btn ghost" type="reset">Clear</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- LIST -->
+  <section class="wrap" id="tab-list" role="tabpanel" aria-labelledby="t-list" hidden>
+    <div class="list-head">
+      <div class="title">
+        <h2>Attendees</h2>
+        <p id="stats"></p>
+      </div>
+      <div class="tools">
+        <button class="btn primary sm" id="exportBtn" type="button">Download CSV</button>
+        <button class="btn ghost sm" id="syncBtn" type="button">Send now</button>
+        <button class="btn ghost sm" id="settingsBtn" type="button">Settings</button>
+      </div>
+    </div>
+
+    <div class="search">
+      <label class="sr" for="search">Search attendees</label>
+      <input type="search" id="search" placeholder="Search name, phone, organisation…">
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>No.</th><th>Name</th><th>Attending as</th><th>Association / Agency</th><th>Organisation</th><th>Sector</th><th>Phone</th><th>Email</th><th>Time</th><th>Desk</th><th>Sync</th><th><span class="sr">Actions</span></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="deskDlg" aria-labelledby="deskTitle">
+  <form method="dialog" class="dlg" id="deskForm">
+    <h3 id="deskTitle">Who is registering on this device?</h3>
+    <p>Your name is recorded with each entry.</p>
+    <label class="sr" for="deskInput">Your name</label>
+    <input type="text" id="deskInput" placeholder="Your name" autocapitalize="words" required>
+    <div class="actions"><button class="btn primary" type="submit">Continue</button></div>
+  </form>
+</dialog>
+
+<dialog id="settingsDlg" aria-labelledby="setTitle">
+  <form method="dialog" class="dlg">
+    <h3 id="setTitle">Central Google Sheet</h3>
+    <p>Paste the Apps Script web-app link to send entries to one shared sheet. Leave blank to keep entries on this device only.</p>
+    <label class="sr" for="endpointInput">Web-app link</label>
+    <input type="text" id="endpointInput" placeholder="https://script.google.com/macros/s/…/exec" spellcheck="false">
+    <div class="actions">
+      <button class="btn primary" value="save" type="submit">Save</button>
+      <button class="btn ghost" value="cancel" type="submit">Cancel</button>
+    </div>
+    <div class="wipe"><button class="linkbtn" value="clear" type="submit" id="wipeBtn">Clear this device's list</button></div>
+  </form>
+</dialog>
+
+<dialog id="askDlg" aria-labelledby="askTitle">
+  <form method="dialog" class="dlg">
+    <h3 id="askTitle"></h3>
+    <p id="askBody"></p>
+    <div class="actions">
+      <button class="btn primary" value="ok" type="submit" id="askOk">Continue</button>
+      <button class="btn ghost" value="cancel" type="submit" id="askCancel">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  const KEY = 'jrb-reg-2026-10-20';
+  const SKEY = 'jrb-reg-settings';
+  // Optional: hard-code the Apps Script URL here before deploying so no device needs setup.
+  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwD9rcEpgwyQtMiYVBnPXwBEGPx1aDJnYM4plhcVP_VFw4jCjLGWPnXu7RGy4Dcg0pJ/exec';
+
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } }
+  };
+  let records = store.get(KEY, []);
+  let settings = Object.assign({ desk: '', endpoint: DEFAULT_ENDPOINT, deviceId: 'D' + Math.random().toString(36).slice(2,6).toUpperCase() }, store.get(SKEY, {}));
+  if (!settings.endpoint && DEFAULT_ENDPOINT) settings.endpoint = DEFAULT_ENDPOINT;
+  const saveAll = () => { store.set(KEY, records); store.set(SKEY, settings); };
+  saveAll();
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const form = $('#regForm');
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const normPhone = p => {
+    let d = String(p).replace(/\D/g, '');
+    if (d.startsWith('234')) d = '0' + d.slice(3);
+    if (d.length === 10 && !d.startsWith('0')) d = '0' + d;
+    return d;
+  };
+  const fmtPhone = d => d.length === 11 ? `${d.slice(0,4)} ${d.slice(4,7)} ${d.slice(7)}` : d;
+  const title = s => s.trim().replace(/\s+/g,' ').replace(/\b([a-z])/g, m => m.toUpperCase());
+  const fmtTime = iso => new Date(iso).toLocaleTimeString('en-NG', {hour:'2-digit', minute:'2-digit'});
+  const nextNo = () => `${settings.deviceId}-${String(records.filter(r => r.device === settings.deviceId).length + 1).padStart(3,'0')}`;
+
+  // ---- in-page confirm (replaces browser alert/confirm)
+  const askDlg = $('#askDlg');
+  function ask({ heading, body, ok = 'Continue', cancel = 'Cancel', danger = false }){
+    return new Promise(resolve => {
+      $('#askTitle').textContent = heading;
+      $('#askBody').innerHTML = body;
+      $('#askOk').textContent = ok;
+      $('#askOk').className = 'btn ' + (danger ? 'danger' : 'primary');
+      $('#askCancel').hidden = !cancel;
+      if (cancel) $('#askCancel').textContent = cancel;
+      askDlg.returnValue = '';
+      askDlg.showModal();
+      askDlg.addEventListener('close', () => resolve(askDlg.returnValue === 'ok'), { once: true });
+    });
+  }
+
+  // ---- tabs
+  const tabs = [...$$('.tab')];
+  function showTab(name){
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+    $('#tab-register').hidden = name !== 'register';
+    $('#tab-list').hidden = name !== 'list';
+    if (name === 'list') renderList();
+  }
+  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+  $('nav').addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    const n = tabs[(i + 1) % tabs.length];
+    n.focus(); showTab(n.dataset.tab);
+  });
+
+  // ---- desk officer
+  const deskDlg = $('#deskDlg');
+  const askDesk = () => { $('#deskInput').value = settings.desk; deskDlg.showModal(); setTimeout(() => $('#deskInput').focus(), 50); };
+  $('#deskForm').addEventListener('submit', e => {
+    const v = $('#deskInput').value.trim();
+    if (!v) { e.preventDefault(); return; }
+    settings.desk = title(v); saveAll(); $('#deskName').textContent = settings.desk;
+  });
+  deskDlg.addEventListener('cancel', e => { if (!settings.desk) e.preventDefault(); });
+  $('#changeDesk').addEventListener('click', askDesk);
+  $('#deskName').textContent = settings.desk || 'Not set';
+
+  // ---- conditional fields
+  const affWrap = $('#affWrap'), otherWrap = $('#otherWrap');
+  const AFF = {
+    'Association': ['Association name', 'Enter the association name', 'e.g. RTEAN, NARTO, PTD, AMATO'],
+    'Government Agency': ['Agency / Ministry / Department', 'Enter the agency or ministry', 'e.g. Ministry of Finance, BIR']
+  };
+  form.addEventListener('change', e => {
+    if (e.target.name === 'category') {
+      const a = AFF[e.target.value];
+      affWrap.hidden = !a;
+      if (a) { $('#affLabel').textContent = a[0]; $('#affMsg').textContent = a[1]; form.affiliation.placeholder = a[2]; }
+      else form.affiliation.value = '';
+      if (e.target.value === 'Government Agency' && !form.sector.value) form.sector.value = 'Government / Public Service';
+      if (e.target.value === 'Association' && !form.sector.value) form.sector.value = 'Haulage / Trucking';
+      fillSuggestions();
+    }
+    if (e.target.name === 'sector') {
+      otherWrap.hidden = e.target.value !== 'Other';
+      if (!otherWrap.hidden) form.sectorOther.focus();
+    }
+    const f = e.target.closest('[data-field]'); if (f) f.classList.remove('err');
+  });
+  form.addEventListener('input', e => {
+    const f = e.target.closest('[data-field]'); if (f) f.classList.remove('err');
+    if (e.target.name === 'phone') checkDupe();
+  });
+  form.phone.addEventListener('blur', () => {
+    const p = normPhone(form.phone.value);
+    if (p.length === 11) form.phone.value = fmtPhone(p);
+  });
+
+  // suggestions from what's been typed before (speeds up repeated associations / agencies)
+  const COMMON_ASSOC = ['Road Transport Employers Association of Nigeria (RTEAN)','National Association of Road Transport Owners (NARTO)','National Union of Road Transport Workers (NURTW)','Petroleum Tanker Drivers (PTD)','Association of Maritime Truck Owners (AMATO)'];
+  function fillSuggestions(){
+    const cat = form.category.value;
+    const affs = new Set(cat === 'Association' ? COMMON_ASSOC : []);
+    const orgs = new Set();
+    records.forEach(r => { if (r.category === cat && r.affiliation) affs.add(r.affiliation); if (r.organization) orgs.add(r.organization); });
+    $('#affList').innerHTML = [...affs].map(v => `<option value="${esc(v)}">`).join('');
+    $('#orgList').innerHTML = [...orgs].map(v => `<option value="${esc(v)}">`).join('');
+  }
+
+  function checkDupe(){
+    const p = normPhone(form.phone.value), box = $('#dupe');
+    const hit = p.length === 11 && records.find(r => r.phone === p);
+    box.classList.toggle('show', !!hit);
+    if (hit) box.innerHTML = `Already registered as <b>${esc(hit.name)}</b> (No. ${esc(hit.regNo)}) at ${fmtTime(hit.createdAt)}.`;
+    return hit;
+  }
+
+  // ---- submit
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!settings.desk) { askDesk(); return; }
+    const v = Object.fromEntries(new FormData(form));
+    const bad = [];
+    if (!v.name?.trim()) bad.push('name');
+    if (!v.category) bad.push('category');
+    if (AFF[v.category] && !v.affiliation?.trim()) bad.push('affiliation');
+    if (!v.sector) bad.push('sector');
+    if (v.sector === 'Other' && !v.sectorOther?.trim()) bad.push('sectorOther');
+    const phone = normPhone(v.phone || '');
+    if (!/^0[789][01]\d{8}$/.test(phone)) bad.push('phone');
+    if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) bad.push('email');
+    $$('[data-field]').forEach(f => f.classList.toggle('err', bad.includes(f.dataset.field)));
+    if (bad.length) {
+      const first = form.querySelector(`[data-field="${bad[0]}"] input, [data-field="${bad[0]}"] select`);
+      first?.focus({ preventScroll: true });
+      first?.closest('[data-field]').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const dupe = checkDupe();
+    if (dupe && !(await ask({
+      heading: 'Phone number already registered',
+      body: `It belongs to <b>${esc(dupe.name)}</b> (No. ${esc(dupe.regNo)}). Register this person again anyway?`,
+      ok: 'Register again', cancel: 'Go back'
+    }))) { form.phone.focus(); return; }
+
+    const seq = records.filter(r => r.device === settings.deviceId).length + 1;
+    const rec = {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+      regNo: `${settings.deviceId}-${String(seq).padStart(3,'0')}`,
+      name: title(v.name),
+      category: v.category,
+      affiliation: v.affiliation ? v.affiliation.trim() : '',
+      organization: v.organization ? v.organization.trim() : '',
+      sector: v.sector === 'Other' ? `Other: ${v.sectorOther.trim()}` : v.sector,
+      phone,
+      email: (v.email || '').trim().toLowerCase(),
+      desk: settings.desk,
+      device: settings.deviceId,
+      createdAt: new Date().toISOString(),
+      synced: false
+    };
+    records.unshift(rec);
+    const saved = store.set(KEY, records);
+    form.reset(); affWrap.hidden = true; otherWrap.hidden = true; $('#dupe').classList.remove('show');
+    updateCounts(); fillSuggestions();
+    toast(`${esc(rec.name)} registered · No. ${esc(rec.regNo)}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    form.name.focus({ preventScroll: true });
+    if (!saved) ask({ heading: 'This entry could not be saved', body: 'Private or incognito windows block storage. Open this page in a normal browser window before registering more attendees.', ok: 'OK', cancel: null });
+    syncPending();
+  });
+  form.addEventListener('reset', () => { setTimeout(() => {
+    affWrap.hidden = true; otherWrap.hidden = true;
+    $$('[data-field]').forEach(f => f.classList.remove('err'));
+    $('#dupe').classList.remove('show');
+  }); });
+
+  // ---- sync to Google Sheet (optional)
+  let syncing = false;
+  async function syncPending(){
+    if (!settings.endpoint || syncing) { updatePill(); return; }
+    const pending = records.filter(r => !r.synced);
+    if (!pending.length) { updatePill(); return; }
+    syncing = true; updatePill();
+    try {
+      const res = await fetch(settings.endpoint, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({ records: pending }) });
+      const out = await res.json();
+      if (!out.ok) throw new Error(out.error || 'Sync failed');
+      const done = new Set(out.saved || pending.map(r => r.id));
+      records.forEach(r => { if (done.has(r.id)) r.synced = true; });
+      store.set(KEY, records);
+    } catch (err) { console.warn('Sync failed, will retry', err); }
+    syncing = false; updatePill();
+    if (!$('#tab-list').hidden) renderList();
+  }
+  function updatePill(){
+    const pill = $('#syncPill'), txt = pill.querySelector('span');
+    const pending = records.filter(r => !r.synced).length;
+    if (!settings.endpoint) { pill.className = 'status'; txt.textContent = 'Saved on this device only'; }
+    else if (syncing) { pill.className = 'status wait'; txt.textContent = 'Sending…'; }
+    else if (pending) { pill.className = 'status wait'; txt.textContent = `${pending} waiting to send`; }
+    else { pill.className = 'status ok'; txt.textContent = 'All sent'; }
+  }
+  setInterval(syncPending, 20000);
+  window.addEventListener('online', syncPending);
+  $('#syncBtn').addEventListener('click', () => {
+    if (!settings.endpoint) { openSettings(); return; }
+    if (!records.some(r => !r.synced)) { toast('Everything is already sent'); return; }
+    syncPending(); toast('Sending…');
+  });
+
+  // ---- settings
+  const sDlg = $('#settingsDlg');
+  const openSettings = () => { $('#endpointInput').value = settings.endpoint; sDlg.returnValue = ''; sDlg.showModal(); };
+  $('#settingsBtn').addEventListener('click', openSettings);
+  sDlg.addEventListener('close', async () => {
+    if (sDlg.returnValue === 'save') {
+      settings.endpoint = $('#endpointInput').value.trim(); saveAll(); syncPending(); renderList(); toast('Settings saved');
+    } else if (sDlg.returnValue === 'clear') {
+      if (records.some(r => !r.synced) && settings.endpoint) {
+        await ask({ heading: 'Send entries first', body: 'Some entries have not been sent yet. Use “Send now” or download the CSV, then clear this device.', ok: 'OK', cancel: null });
+        return;
+      }
+      if (await ask({ heading: `Delete all ${records.length} entries?`, body: 'This removes every entry from this device and cannot be undone.', ok: 'Delete all', cancel: 'Keep', danger: true })) {
+        records = []; saveAll(); renderList(); updateCounts(); toast('List cleared');
+      }
+    }
+  });
+
+  // ---- list
+  function updateCounts(){ $('#tabCount').textContent = records.length; $('#nextNo').textContent = nextNo(); updatePill(); }
+  function renderList(){
+    const q = $('#search').value.trim().toLowerCase();
+    const list = q ? records.filter(r => [r.name, r.phone, r.organization, r.affiliation, r.sector, r.email, r.regNo].join(' ').toLowerCase().includes(q.replace(/\s/g,'')) || [r.name, r.organization, r.affiliation, r.sector].join(' ').toLowerCase().includes(q)) : records;
+    const by = c => records.filter(r => r.category === c).length;
+    $('#stats').textContent = `${records.length} registered · ${by('Association')} association · ${by('Government Agency')} government · ${by('Independent / Company')} independent`;
+    $('#rows').innerHTML = list.map(r => `<tr>
+      <td class="c-num" data-label="No.">${esc(r.regNo)}</td>
+      <td class="c-name" data-label="Name">${esc(r.name)}</td>
+      <td data-label="Attending as">${esc(r.category)}</td>
+      <td data-label="Assoc./Agency">${esc(r.affiliation)}</td>
+      <td data-label="Organisation">${esc(r.organization)}</td>
+      <td data-label="Sector">${esc(r.sector)}</td>
+      <td class="c-phone" data-label="Phone">${esc(fmtPhone(r.phone))}</td>
+      <td data-label="Email">${esc(r.email)}</td>
+      <td class="c-time" data-label="Time">${fmtTime(r.createdAt)}</td>
+      <td data-label="Desk">${esc(r.desk)}</td>
+      <td data-label="Sync">${settings.endpoint ? `<span class="sync ${r.synced ? 'y' : 'n'}">${r.synced ? 'Sent' : 'Pending'}</span>` : ''}</td>
+      <td class="c-act">${r.synced ? '' : `<button class="linkbtn" type="button" data-del="${esc(r.id)}">Delete</button>`}</td></tr>`).join('');
+    $('.tablewrap').hidden = list.length === 0;
+    $('#empty').hidden = list.length > 0;
+    $('#empty').innerHTML = records.length
+      ? 'No attendees match that search.'
+      : 'No attendees yet.<br><button class="btn ghost sm" type="button" data-go>Register the first attendee</button>';
+  }
+  $('#search').addEventListener('input', renderList);
+  $('#empty').addEventListener('click', e => { if (e.target.closest('[data-go]')) { showTab('register'); form.name.focus(); } });
+  $('#rows').addEventListener('click', async e => {
+    const id = e.target.dataset.del; if (!id) return;
+    const r = records.find(x => x.id === id);
+    if (r && await ask({ heading: `Delete ${r.name}?`, body: `Entry No. ${esc(r.regNo)} will be removed from this device.`, ok: 'Delete', cancel: 'Keep', danger: true })) {
+      records = records.filter(x => x.id !== id); store.set(KEY, records); renderList(); updateCounts(); toast('Entry deleted');
+    }
+  });
+
+  // ---- CSV export (opens in Excel)
+  $('#exportBtn').addEventListener('click', () => {
+    if (!records.length) { toast('Nothing to download yet'); return; }
+    const head = ['Reg No','Full Name','Attending As','Association / Agency','Organisation','Sector','Phone','Email','Date','Time','Desk Officer'];
+    const cell = v => `"${String(v ?? '').replace(/"/g,'""')}"`;
+    const lines = [...records].reverse().map(r => { const d = new Date(r.createdAt);
+      return [r.regNo, r.name, r.category, r.affiliation, r.organization, r.sector, '\t' + r.phone, r.email, d.toLocaleDateString('en-NG'), d.toLocaleTimeString('en-NG'), r.desk].map(cell).join(','); });
+    const blob = new Blob(['﻿' + [head.map(cell).join(','), ...lines].join('\r\n')], {type: 'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `JRB-Attendees-${settings.desk.replace(/\W+/g,'-') || 'desk'}-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+
+  // ---- toast
+  let tt; function toast(html){ const t = $('#toast'); t.innerHTML = html; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 3000); }
+
+  updateCounts(); fillSuggestions();
+  if (!settings.desk) askDesk(); else form.name.focus();
+  syncPending();
+})();
+</script>
+</body>
+</html>
